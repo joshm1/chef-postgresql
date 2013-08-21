@@ -112,16 +112,16 @@ ssl_key_file = '<%= node["postgresql"]["ssl_key_file"] %>'   # (change requires 
 
 shared_buffers = <%= node["postgresql"]["shared_buffers"] %>     # min 128kB
           # (change requires restart)
-#temp_buffers = <%= node["postgresql"]["temp_buffers"] %>     # min 800kB
-#max_prepared_transactions = <%= node["postgresql"]["max_prepared_transactions"] %>    # zero disables the feature
+temp_buffers = <%= node["postgresql"]["temp_buffers"] %>     # min 800kB
+max_prepared_transactions = <%= node["postgresql"]["max_prepared_transactions"] %>    # zero disables the feature
           # (change requires restart)
 # Note:  Increasing max_prepared_transactions costs ~600 bytes of shared memory
 # per transaction slot, plus lock space (see max_locks_per_transaction).
 # It is not advisable to set max_prepared_transactions nonzero unless you
 # actively intend to use prepared transactions.
-#work_mem = <%= node["postgresql"]["work_mem"] %>       # min 64kB
-#maintenance_work_mem = <%= node["postgresql"]["maintenance_work_mem"] %>    # min 1MB
-#max_stack_depth = <%= node["postgresql"]["max_stack_depth"] %>      # min 100kB
+work_mem = <%= node["postgresql"]["work_mem"] %>       # min 64kB
+maintenance_work_mem = <%= node["postgresql"]["maintenance_work_mem"] %>    # min 1MB
+max_stack_depth = <%= node["postgresql"]["max_stack_depth"] %>      # min 100kB
 
 # - Kernel Resource Usage -
 
@@ -154,38 +154,38 @@ shared_buffers = <%= node["postgresql"]["shared_buffers"] %>     # min 128kB
 
 # - Settings -
 
-#wal_level = <%= node["postgresql"]["wal_level"] %>      # minimal, archive, or hot_standby
+wal_level = <%= node["postgresql"]["wal_level"] %>      # minimal, archive, or hot_standby
           # (change requires restart)
-#fsync = <%= node["postgresql"]["fsync"] %>       # turns forced synchronization on or off
-#synchronous_commit = <%= node["postgresql"]["synchronous_commit"] %>    # synchronization level; on, off, or local
-#wal_sync_method = <%= node["postgresql"]["wal_sync_method"] %>    # the default is the first option
+fsync = <%= node["postgresql"]["fsync"] %>       # turns forced synchronization on or off
+synchronous_commit = <%= node["postgresql"]["synchronous_commit"] %>    # synchronization level; on, off, or local
+wal_sync_method = <%= node["postgresql"]["wal_sync_method"] %>    # the default is the first option
           # supported by the operating system:
           #   open_datasync
           #   fdatasync (default on Linux)
           #   fsync
           #   fsync_writethrough
           #   open_sync
-#full_page_writes = <%= node["postgresql"]["full_page_writes"] %>      # recover from partial page writes
-#wal_buffers = <%= node["postgresql"]["wal_buffers"] %>     # min 32kB, -1 sets based on shared_buffers
+full_page_writes = <%= node["postgresql"]["full_page_writes"] %>      # recover from partial page writes
+wal_buffers = <%= node["postgresql"]["wal_buffers"] %>     # min 32kB, -1 sets based on shared_buffers
           # (change requires restart)
-#wal_writer_delay = <%= node["postgresql"]["wal_writer_delay"] %>   # 1-10000 milliseconds
+wal_writer_delay = <%= node["postgresql"]["wal_writer_delay"] %>   # 1-10000 milliseconds
 
-#commit_delay = <%= node["postgresql"]["commit_delay"] %>     # range 0-100000, in microseconds
-#commit_siblings = <%= node["postgresql"]["commit_siblings"] %>      # range 1-1000
+commit_delay = <%= node["postgresql"]["commit_delay"] %>     # range 0-100000, in microseconds
+commit_siblings = <%= node["postgresql"]["commit_siblings"] %>      # range 1-1000
 
 # - Checkpoints -
 
-#checkpoint_segments = <%= node["postgresql"]["checkpoint_segments"] %>    # in logfile segments, min 1, 16MB each
-#checkpoint_timeout = <%= node["postgresql"]["checkpoint_timeout"] %>    # range 30s-1h
-#checkpoint_completion_target = <%= node["postgresql"]["checkpoint_completion_target"] %> # checkpoint target duration, 0.0 - 1.0
-#checkpoint_warning = <%= node["postgresql"]["checkpoint_warning"] %>   # 0 disables
+checkpoint_segments = <%= node["postgresql"]["checkpoint_segments"] %>    # in logfile segments, min 1, 16MB each
+checkpoint_timeout = <%= node["postgresql"]["checkpoint_timeout"] %>    # range 30s-1h
+checkpoint_completion_target = <%= node["postgresql"]["checkpoint_completion_target"] %> # checkpoint target duration, 0.0 - 1.0
+checkpoint_warning = <%= node["postgresql"]["checkpoint_warning"] %>   # 0 disables
 
 # - Archiving -
 
-#archive_mode = <%= node["postgresql"]["archive_mode"] %>   # allows archiving to be done
+archive_mode = <%= node["postgresql"]["archive_mode"] %>   # allows archiving to be done
         # (change requires restart)
-#archive_command = '<%= node["postgresql"]["archive_command"] %>'   # command to use to archive a logfile segment
-#archive_timeout = <%= node["postgresql"]["archive_timeout"] %>    # force a logfile segment switch after this
+archive_command = '<%= node["postgresql"]["archive_command"] %>'   # command to use to archive a logfile segment
+archive_timeout = <%= node["postgresql"]["archive_timeout"] %>    # force a logfile segment switch after this
         # number of seconds; 0 disables
 
 
@@ -193,37 +193,37 @@ shared_buffers = <%= node["postgresql"]["shared_buffers"] %>     # min 128kB
 # REPLICATION
 #------------------------------------------------------------------------------
 
-# - Master Server -
+<% if node["postgresql"]["master"] %>
+  # - Master Server -
 
-# These settings are ignored on a standby server
+  # These settings are ignored on a standby server
 
-#max_wal_senders = <%= node["postgresql"]["max_wal_senders"] %>    # max number of walsender processes
-        # (change requires restart)
-#wal_sender_delay = <%= node["postgresql"]["wal_sender_delay"] %>    # walsender cycle time, 1-10000 milliseconds
-#wal_keep_segments = <%= node["postgresql"]["wal_keep_segments"] %>    # in logfile segments, 16MB each; 0 disables
-#vacuum_defer_cleanup_age = <%= node["postgresql"]["vacuum_defer_cleanup_age"] %> # number of xacts by which cleanup is delayed
-#replication_timeout = <%= node["postgresql"]["replication_timeout"] %>  # in milliseconds; 0 disables
-#synchronous_standby_names = '<%= node["postgresql"]["synchronous_standby_names"] %>' # standby servers that provide sync rep
-        # comma-separated list of application_name
-        # from standby(s); '*' = all
-
-# - Standby Servers -
-
-# These settings are ignored on a master server
-
-#hot_standby = <%= node["postgresql"]["hot_standby"] %>      # "on" allows queries during recovery
+  max_wal_senders = <%= node["postgresql"]["max_wal_senders"] %>    # max number of walsender processes
           # (change requires restart)
-#max_standby_archive_delay = <%= node["postgresql"]["max_standby_archive_delay"] %>  # max delay before canceling queries
-          # when reading WAL from archive;
-          # -1 allows indefinite delay
-#max_standby_streaming_delay = <%= node["postgresql"]["max_standby_streaming_delay"] %>  # max delay before canceling queries
-          # when reading streaming WAL;
-          # -1 allows indefinite delay
-#wal_receiver_status_interval = <%= node["postgresql"]["wal_receiver_status_interval"] %> # send replies at least this often
-          # 0 disables
-#hot_standby_feedback = <%= node["postgresql"]["hot_standby_feedback"] %>   # send info from standby to prevent
-          # query conflicts
+  wal_keep_segments = <%= node["postgresql"]["wal_keep_segments"] %>    # in logfile segments, 16MB each; 0 disables
+  vacuum_defer_cleanup_age = <%= node["postgresql"]["vacuum_defer_cleanup_age"] %> # number of xacts by which cleanup is delayed
+  replication_timeout = <%= node["postgresql"]["replication_timeout"] %>  # in milliseconds; 0 disables
+  #synchronous_standby_names = '<%= node["postgresql"]["synchronous_standby_names"] %>' # standby servers that provide sync rep
+          # comma-separated list of application_name
+          # from standby(s); '*' = all
+<% else %>
+  # - Standby Servers -
 
+  # These settings are ignored on a master server
+
+  hot_standby = <%= node["postgresql"]["hot_standby"] %>      # "on" allows queries during recovery
+            # (change requires restart)
+  max_standby_archive_delay = <%= node["postgresql"]["max_standby_archive_delay"] %>  # max delay before canceling queries
+            # when reading WAL from archive;
+            # -1 allows indefinite delay
+  max_standby_streaming_delay = <%= node["postgresql"]["max_standby_streaming_delay"] %>  # max delay before canceling queries
+            # when reading streaming WAL;
+            # -1 allows indefinite delay
+  wal_receiver_status_interval = <%= node["postgresql"]["wal_receiver_status_interval"] %> # send replies at least this often
+            # 0 disables
+  hot_standby_feedback = <%= node["postgresql"]["hot_standby_feedback"] %>   # send info from standby to prevent
+            # query conflicts
+<% end %>
 
 #------------------------------------------------------------------------------
 # QUERY TUNING
@@ -432,27 +432,27 @@ log_line_prefix = '<%= node["postgresql"]["log_line_prefix"] %>'     # special v
 # AUTOVACUUM PARAMETERS
 #------------------------------------------------------------------------------
 
-#autovacuum = <%= node["postgresql"]["autovacuum"] %>      # Enable autovacuum subprocess?  'on'
+autovacuum = <%= node["postgresql"]["autovacuum"] %>      # Enable autovacuum subprocess?  'on'
           # requires track_counts to also be on.
-#log_autovacuum_min_duration = <%= node["postgresql"]["log_autovacuum_min_duration"] %> # -1 disables, 0 logs all actions and
+log_autovacuum_min_duration = <%= node["postgresql"]["log_autovacuum_min_duration"] %> # -1 disables, 0 logs all actions and
           # their durations, > 0 logs only
           # actions running at least this number
           # of milliseconds.
-#autovacuum_max_workers = <%= node["postgresql"]["autovacuum_max_workers"] %>   # max number of autovacuum subprocesses
+autovacuum_max_workers = <%= node["postgresql"]["autovacuum_max_workers"] %>   # max number of autovacuum subprocesses
           # (change requires restart)
-#autovacuum_naptime = <%= node["postgresql"]["autovacuum_naptime"] %>    # time between autovacuum runs
-#autovacuum_vacuum_threshold = <%= node["postgresql"]["autovacuum_vacuum_threshold"] %> # min number of row updates before
+autovacuum_naptime = <%= node["postgresql"]["autovacuum_naptime"] %>    # time between autovacuum runs
+autovacuum_vacuum_threshold = <%= node["postgresql"]["autovacuum_vacuum_threshold"] %> # min number of row updates before
           # vacuum
-#autovacuum_analyze_threshold = <%= node["postgresql"]["autovacuum_analyze_threshold"] %>  # min number of row updates before
+autovacuum_analyze_threshold = <%= node["postgresql"]["autovacuum_analyze_threshold"] %>  # min number of row updates before
           # analyze
-#autovacuum_vacuum_scale_factor = <%= node["postgresql"]["autovacuum_vacuum_scale_factor"] %> # fraction of table size before vacuum
-#autovacuum_analyze_scale_factor = <%= node["postgresql"]["autovacuum_analyze_scale_factor"] %>  # fraction of table size before analyze
-#autovacuum_freeze_max_age = <%= node["postgresql"]["autovacuum_freeze_max_age"] %>  # maximum XID age before forced vacuum
+autovacuum_vacuum_scale_factor = <%= node["postgresql"]["autovacuum_vacuum_scale_factor"] %> # fraction of table size before vacuum
+autovacuum_analyze_scale_factor = <%= node["postgresql"]["autovacuum_analyze_scale_factor"] %>  # fraction of table size before analyze
+autovacuum_freeze_max_age = <%= node["postgresql"]["autovacuum_freeze_max_age"] %>  # maximum XID age before forced vacuum
           # (change requires restart)
-#autovacuum_vacuum_cost_delay = <%= node["postgresql"]["autovacuum_vacuum_cost_delay"] %>  # default vacuum cost delay for
+autovacuum_vacuum_cost_delay = <%= node["postgresql"]["autovacuum_vacuum_cost_delay"] %>  # default vacuum cost delay for
           # autovacuum, in milliseconds;
           # -1 means use vacuum_cost_delay
-#autovacuum_vacuum_cost_limit = <%= node["postgresql"]["autovacuum_vacuum_cost_limit"] %>  # default vacuum cost limit for
+autovacuum_vacuum_cost_limit = <%= node["postgresql"]["autovacuum_vacuum_cost_limit"] %>  # default vacuum cost limit for
           # autovacuum, -1 means use
           # vacuum_cost_limit
 
@@ -515,8 +515,8 @@ default_text_search_config = '<%= node["postgresql"]["default_text_search_config
 # LOCK MANAGEMENT
 #------------------------------------------------------------------------------
 
-#deadlock_timeout = <%= node["postgresql"]["deadlock_timeout"] %>
-#max_locks_per_transaction = <%= node["postgresql"]["max_locks_per_transaction"] %>   # min 10
+deadlock_timeout = <%= node["postgresql"]["deadlock_timeout"] %>
+max_locks_per_transaction = <%= node["postgresql"]["max_locks_per_transaction"] %>   # min 10
           # (change requires restart)
 # Note:  Each lock table slot uses ~270 bytes of shared memory, and there are
 # max_locks_per_transaction * (max_connections + max_prepared_transactions)
