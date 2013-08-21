@@ -1,0 +1,3 @@
+<%= "standby_mode     = '#{node['postgresql']['standby_mode']}'"     if node['postgresql']['standby_mode'] %>
+<%= "primary_conninfo = '#{node['postgresql']['primary_conninfo']}'" if node['postgresql']['primary_conninfo'] %>
+<%= "trigger_file     = '#{node['postgresql']['trigger_file']}'"     if node['postgresql']['trigger_file'] %>

@@ -48,6 +48,17 @@ template node["postgresql"]["ident_file"] do
   notifies :restart, "service[postgresql]"
 end
 
+# recovery
+unless node["postgresql"]["master"]
+  template "#{node["postgresql"]["data_directory"]}/recovery.conf" do
+    source "recovery.conf.erb"
+    owner  "postgres"
+    group  "postgres"
+    mode   "0644"
+    notifies :restart, "service[postgresql]"
+  end
+end
+
 # postgresql
 pg_template_source = node["postgresql"]["conf"].any? ? "custom" : "standard"
 template "/etc/postgresql/#{pg_version}/main/postgresql.conf" do
